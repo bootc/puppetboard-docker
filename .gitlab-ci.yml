@@ -4,7 +4,7 @@ build:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - export DKR_IMAGE="$(echo $CI_PROJECT_PATH | tr '[:upper:]' '[:lower:]')"
+    - export DKR_IMAGE=bootc/puppetboard
     - export CI_COMMIT_SHA_TRUNC="$(echo $CI_COMMIT_SHA | cut -c 1-12)"
     - >
       export PUPPETBOARD_VERSION="$(
