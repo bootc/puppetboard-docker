@@ -27,4 +27,4 @@ Puppetboard is distributed under the Apache-2.0 license. This project is also
 licensed under the Apache-2.0 license.
 
 Note that Docker images produced using files in this repository will likely
-containe software convered by other licenses.
+contain software covered by other licenses.
