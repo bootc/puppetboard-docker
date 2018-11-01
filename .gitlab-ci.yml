@@ -6,7 +6,10 @@ build:
   script:
     - export DKR_IMAGE="$(echo $CI_PROJECT_PATH | tr '[:upper:]' '[:lower:]')"
     - export CI_COMMIT_SHA_TRUNC="$(echo $CI_COMMIT_SHA | cut -c 1-12)"
-    - export $(awk '$1 == "ARG" && $2 ~ "^PUPPETBOARD_VERSION=" { print $2 }' Dockerfile)
+    - >
+      export PUPPETBOARD_VERSION="$(
+      awk -F= '$1 == "ARG PUPPETBOARD_VERSION" { print $2 }' Dockerfile |
+      sed 's/"//g')"
     - \[ -z "$DOCKER_CONFIG" ] && export DOCKER_CONFIG=/kaniko/.docker
     - |
       cat > "${DOCKER_CONFIG}/config.json" <<EOF
