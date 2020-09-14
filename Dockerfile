@@ -1,6 +1,6 @@
-FROM alpine:3.11
+FROM alpine:3.12
 
-ARG PUPPETBOARD_VERSION="2.1.2"
+ARG PUPPETBOARD_VERSION="2.2.0"
 ARG GUNICORN_VERSION="20.0.4"
 
 ARG BUILD_DATE=1970-01-01T00:00:00Z
@@ -18,16 +18,21 @@ LABEL org.label-schema.vendor="Chris Boot" \
 
 ENV PUPPETBOARD_SETTINGS="docker_settings.py"
 
-RUN apk add --no-cache --update curl python3 && \
+RUN apk add --no-cache --update \
+    curl \
+    python3 \
+    py3-pip \
+    py3-wheel \
+  && \
   rm -rf /var/cache/apk/*
 
 RUN set -eux; \
-  pip3 install \
+  pip install \
     gunicorn=="$GUNICORN_VERSION" \
     pypuppetdb \
     puppetboard=="$PUPPETBOARD_VERSION" \
   ; \
-  pip3 check --verbose; \
+  pip check --verbose; \
   rm -rf /root/.cache/pip
 
 EXPOSE 8000
