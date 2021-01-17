@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM alpine:3.13
 
 ARG PUPPETBOARD_VERSION="2.2.0"
 ARG GUNICORN_VERSION="20.0.4"
@@ -14,13 +14,13 @@ RUN apk add --no-cache --update \
   rm -rf /var/cache/apk/*
 
 RUN set -eux; \
-  pip install \
+  pip install --no-cache-dir \
     gunicorn=="$GUNICORN_VERSION" \
     pypuppetdb \
     puppetboard=="$PUPPETBOARD_VERSION" \
   ; \
   pip check --verbose; \
-  rm -rf /root/.cache/pip
+  :
 
 EXPOSE 8000
 
