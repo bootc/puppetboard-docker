@@ -1,43 +1,16 @@
 ---
+include:
+  - template: Workflows/Branch-Pipelines.gitlab-ci.yml
+
+stages:
+  - build
+
 build:
+  stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - export DKR_IMAGE=bootc/puppetboard
-    - export CI_COMMIT_SHA_TRUNC="$(echo $CI_COMMIT_SHA | cut -c 1-12)"
-    - >
-      export PUPPETBOARD_VERSION="$(
-      awk -F= '$1 == "ARG PUPPETBOARD_VERSION" { print $2 }' Dockerfile |
-      sed 's/"//g')"
-    - \[ -z "$DOCKER_CONFIG" ] && export DOCKER_CONFIG=/kaniko/.docker
-    - |
-      cat > "${DOCKER_CONFIG}/config.json" <<EOF
-      {
-        "auths": {
-          "https://index.docker.io/v1/": {
-            "auth": "${DOCKER_HUB_AUTH}"
-          },
-          "${CI_REGISTRY}": {
-            "username": "${CI_REGISTRY_USER}",
-            "password": "${CI_REGISTRY_PASSWORD}"
-          }
-        }
-      }
-      EOF
-    - >-
-      /kaniko/executor
-      --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/Dockerfile
-      --build-arg=BUILD_DATE="$(date --utc +%Y-%m-%dT%H:%M:%SZ)"
-      --build-arg=VCS_REF=${CI_COMMIT_SHA}
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}"
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA_TRUNC}"
-      --destination "${CI_REGISTRY_IMAGE}:${PUPPETBOARD_VERSION}"
-      --destination "${CI_REGISTRY_IMAGE}:latest"
-      --destination "${DKR_IMAGE}:${CI_COMMIT_REF_SLUG}"
-      --destination "${DKR_IMAGE}:${CI_COMMIT_SHA_TRUNC}"
-      --destination "${DKR_IMAGE}:${PUPPETBOARD_VERSION}"
-      --destination "${DKR_IMAGE}:latest"
+    - ash ci-build/kaniko.sh
 
 # vim: ai ts=2 sw=2 et sts=2 ft=yaml
