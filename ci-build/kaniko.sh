@@ -26,7 +26,7 @@ kaniko_destinations() {
     echo "--destination ${CI_REGISTRY_IMAGE}:${TAG}";
   done
 
-  if [ -n "${DOCKER_HUB_AUTH:-}" ]; then
+  if [ -n "${DOCKER_HUB_IMAGE:-}" ]; then
     for TAG in $TAGS; do
       echo "--destination ${DOCKER_HUB_IMAGE}:${TAG}";
     done
