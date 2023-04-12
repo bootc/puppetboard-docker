@@ -1,6 +1,6 @@
-FROM alpine:3.16
+FROM alpine:3.17
 
-ARG PUPPETBOARD_VERSION="4.2.0"
+ARG PUPPETBOARD_VERSION="4.3.0"
 ARG GUNICORN_VERSION="20.1.0"
 
 ENV PUPPETBOARD_SETTINGS="docker_settings.py"
@@ -8,10 +8,15 @@ ENV PUPPETBOARD_SETTINGS="docker_settings.py"
 RUN apk add --no-cache --update \
     curl \
     python3 \
-    py3-pip \
-    py3-wheel \
   && \
   rm -rf /var/cache/apk/*
+
+RUN set -eux; \
+  python -m ensurepip --default-pip; \
+  pip install --upgrade --no-cache-dir \
+    pip \
+    wheel \
+  ;
 
 RUN set -eux; \
   pip install --no-cache-dir \
@@ -25,7 +30,7 @@ RUN set -eux; \
 EXPOSE 8000
 
 CMD /usr/bin/gunicorn \
-  -b 0.0.0.0:8000 \
+  --bind=0.0.0.0:8000 \
   --access-logfile=/dev/stdout \
   puppetboard.app:app
 
